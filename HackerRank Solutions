@@ -1,1 +1,321 @@
+--https://www.hackerrank.com/challenges/revising-the-select-query
+select *
+from city
+where population>100000 and countrycode='usa'
 
+--https://www.hackerrank.com/challenges/revising-the-select-query-2
+select name
+from city
+where countrycode='usa' and population>120000
+
+--https://www.hackerrank.com/challenges/select-all-sql
+select *
+from city
+
+--https://www.hackerrank.com/challenges/select-by-id
+select *
+from city
+where id=1661
+
+--https://www.hackerrank.com/challenges/japanese-cities-attributes
+select *
+from city
+where countrycode='jpn'
+
+--https://www.hackerrank.com/challenges/japanese-cities-name
+select name
+from city
+where countrycode='jpn'
+
+--https://www.hackerrank.com/challenges/weather-observation-station-1
+select city, state
+from station
+
+--https://www.hackerrank.com/challenges/weather-observation-station-3
+select distinct city
+from station
+where id%2=0
+
+--https://www.hackerrank.com/challenges/weather-observation-station-4
+select count(city)-count(distinct city)
+from station
+
+--https://www.hackerrank.com/challenges/weather-observation-station-6
+select city
+from station
+where city like '[aeiou]%'
+
+--https://www.hackerrank.com/challenges/weather-observation-station-7
+select distinct city
+from station
+where city like '%[aeiou]'
+
+--https://www.hackerrank.com/challenges/weather-observation-station-8
+select distinct city
+from station
+where city like '[aeiou]%' and city like '%[aeiou]'
+
+--https://www.hackerrank.com/challenges/weather-observation-station-9
+select distinct city
+from station
+where city not like '[aeiou]%'
+
+--https://www.hackerrank.com/challenges/weather-observation-station-10
+select distinct city
+from station
+where city not like '%[aeiou]'
+
+--https://www.hackerrank.com/challenges/weather-observation-station-11
+select distinct city
+from station
+where city not like '[aeiou]%' or city not like '%[aeiou]'
+
+--https://www.hackerrank.com/challenges/weather-observation-station-12
+select distinct city
+from station
+where city not like '[aeiou]%' and city not like '%[aeiou]'
+
+--https://www.hackerrank.com/challenges/more-than-75-marks
+select name
+from students
+where marks>75
+order by right(name,3), id
+
+--https://www.hackerrank.com/challenges/name-of-employees
+select name
+from employee
+order by name
+
+--https://www.hackerrank.com/challenges/salary-of-employees
+select name
+from employee
+where salary>2000 and months<10
+order by employee_id
+
+--https://www.hackerrank.com/challenges/what-type-of-triangle
+select
+case
+when a+b<=c or b+c<=a or c+a<=b then 'Not A Triangle'
+when a=b and b=c then 'Equilateral'
+when a=b or b=c or c=a then 'Isosceles'
+when a<>b and b<>c then 'Scalene'
+end
+from triangles
+
+--https://www.hackerrank.com/challenges/the-pads
+select concat(name,'(',left(occupation,1),')')
+from occupations
+order by name
+select concat('There are a total of ',count(occupation),' ',lower(occupation),'s.')
+from occupations
+group by occupation
+order by count(occupation)
+
+--https://www.hackerrank.com/challenges/revising-aggregations-the-count-function
+select count(name)
+from city
+where population>100000
+
+--https://www.hackerrank.com/challenges/revising-aggregations-sum
+select sum(population)
+from city
+where district='california'
+
+--https://www.hackerrank.com/challenges/revising-aggregations-the-average-function
+select avg(population)
+from city
+where district='california'
+
+--https://www.hackerrank.com/challenges/average-population
+select floor(avg(population))
+from city
+
+--https://www.hackerrank.com/challenges/japan-population
+select sum(population)
+from city
+where countrycode='jpn'
+
+--https://www.hackerrank.com/challenges/population-density-difference
+select max(population)-min(population)
+from city
+
+--https://www.hackerrank.com/challenges/the-blunder
+select
+ceiling(
+avg(cast(salary as decimal))-
+avg(cast(replace(salary,0,'') as decimal))
+)
+from employees
+
+--https://www.hackerrank.com/challenges/earnings-of-employees
+select top 1 salary*months, count(salary*months)
+from employee
+group by salary, months
+order by salary*months desc
+
+--https://www.hackerrank.com/challenges/weather-observation-station-2
+select cast(sum(lat_n) as numeric(38,2)) as lat, cast(sum(long_w) as numeric(38,2)) as lon
+from station
+
+--https://www.hackerrank.com/challenges/weather-observation-station-13
+select cast(sum(lat_n) as numeric(38,4))
+from station
+where lat_n>38.7880 and lat_n<137.2345
+
+--https://www.hackerrank.com/challenges/weather-observation-station-14
+select cast(max(lat_n) as numeric(38,4))
+from station
+where lat_n<137.2345
+
+--https://www.hackerrank.com/challenges/weather-observation-station-15
+select cast(long_w as numeric(38,4))
+from station
+where lat_n=
+(select max(lat_n)
+from station
+where lat_n<137.2345)
+
+--https://www.hackerrank.com/challenges/weather-observation-station-16
+select cast(min(lat_n) as numeric(38,4))
+from station
+where lat_n>38.7780
+
+--https://www.hackerrank.com/challenges/weather-observation-station-17
+select cast(long_w as numeric(38,4))
+from station
+where lat_n=
+(select min(lat_n)
+from station
+where lat_n>38.7780)
+
+--https://www.hackerrank.com/challenges/asian-population
+select sum(city.population)
+from city
+join country
+on city.countrycode=country.code
+where continent='asia'
+
+--https://www.hackerrank.com/challenges/african-cities
+select city.name
+from city
+join country
+on city.countrycode=country.code
+where continent='africa'
+
+--https://www.hackerrank.com/challenges/average-population-of-each-continent
+select country.continent,round(avg(city.population),0)
+from city
+join country
+on city.countrycode=country.code
+group by country.continent
+
+--https://hackerrank.com/challenges/weather-observation-station-18
+select cast(abs((min(lat_n)-max(lat_n)))+abs((min(long_w)-max(long_w))) as numeric(38,4))
+from station
+
+--https://www.hackerrank.com/challenges/weather-observation-station-19
+select cast(sqrt(power(min(long_w)-max(long_w),2)+power(min(lat_n)-max(lat_n),2)) as
+numeric(38,4))
+from station
+
+--https://www.hackerrank.com/challenges/draw-the-triangle-1
+declare @a numeric
+select @a=22
+while @a>0
+begin
+print replicate('* ',@a)
+set @a=@a-1
+end
+
+--https://www.hackerrank.com/challenges/draw-the-triangle-2
+declare @a numeric
+select @a=-1
+while @a<=20
+begin
+print replicate('* ',@a)
+set @a=@a+1
+end
+
+--https://www.hackerrank.com/challenges/weather-observation-station-5
+select top 1 city,len(city)
+from station
+order by len(city),city
+select top 1 city,len(city)
+from station
+order by len(city) desc,city
+
+--https://www.hackerrank.com/challenges/binary-search-tree-1
+select n,
+case
+when p is null then 'Root'
+when n in (select p from bst) then 'Inner'
+else 'Leaf'
+end
+from bst
+order by n
+
+--https://www.hackerrank.com/challenges/the-company
+select c.company_code,founder,count(distinct lead_manager_code),count(distinct
+senior_manager_code),count(distinct manager_code),count(distinct employee_code)
+from employee as e
+join company as c
+on e.company_code=c.company_code
+group by c.company_code,founder
+order by c.company_code
+
+--https://www.hackerrank.com/challenges/the-report
+select
+case
+when grade>=8 then name
+else NULL
+end,grade,marks
+from students as s
+join grades as g
+on s.marks between g.min_mark and g.max_mark
+order by grade desc,name,marks
+
+--https://www.hackerrank.com/challenges/full-score
+select h.hacker_id,name
+from submissions as s
+join hackers as h
+on s.hacker_id=h.hacker_id
+join challenges as c
+on s.challenge_id=c.challenge_id
+join difficulty as d
+on c.difficulty_level=d.difficulty_level
+where s.score=d.score
+group by h.hacker_id,name
+having count(c.challenge_id)>1
+order by count(c.challenge_id) desc,h.hacker_id
+
+--https://www.hackerrank.com/challenges/weather-observation-station-20
+select top 1
+cast(PERCENTILE_CONT (0.5)
+WITHIN GROUP (ORDER BY lat_n)
+OVER (partition by null) as numeric(38,4))
+from station
+
+--https://www.hackerrank.com/challenges/placements
+select name
+from students as s
+join friends as f
+on s.id=f.id
+join packages as p
+on s.id=p.id
+join packages as p2
+on f.friend_id=p2.id
+where p2.salary>p.salary
+order by p2.salary
+
+--https://www.hackerrank.com/challenges/contest-leaderboard
+with max_score as
+(select hacker_id,challenge_id,max(score) as mscore
+from submissions
+group by hacker_id,challenge_id)
+select h.hacker_id,name,sum(mscore)
+from max_score as ms
+join hackers as h
+on ms.hacker_id=h.hacker_id
+group by h.hacker_id,name
+having sum(mscore)>0
+order by sum(mscore) desc,hacker_id

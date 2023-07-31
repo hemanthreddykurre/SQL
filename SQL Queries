@@ -1,1 +1,341 @@
+--Create
+create table amazon_orders
+(
+order_id integer,
+order_date date,
+product_name varchar(100),
+total_price decimal(6,2),
+payment_method varchar(20)
+)
 
+--Alter
+alter table amazon_orders alter column order_date datetime;
+alter table amazon_orders alter column product_name varchar(20);
+
+--Drop
+Drop table amazon_orders;
+
+--Insert
+insert into amazon_orders values(1,'2022-10-01','Baby Milk',30.5,'UPI');
+insert into amazon_orders values(2,'2022-10-02','Baby Powder',130,'Credit Card');
+insert into amazon_orders values(3,'2022-10-01','Baby cream',30.5,'UPI');
+insert into amazon_orders values(4,'2022-10-02','Baby soap',130,'Credit Card');
+
+--Update
+update a_orders
+set discount=10
+where order_id=2;
+
+--Delete
+Delete from amazon_orders
+
+--write a sql to get all the orders where customers name has "a" as second character and "d" as fourth character
+select * from orders where customer_name like '_a_d%';
+
+--write a sql to get all the orders placed in the month of dec 2020 
+select * from orders where  order_date between '2020-12-01' and '2020-12-31';
+
+--write a query to get all the orders where ship_mode is neither in 'Standard Class' nor in 'First Class' and ship_date is after nov 2020
+select * from orders where  ship_mode not in ('Standard Class','First Class')
+and ship_date > '2020-11-30'
+
+--write a query to get all the orders where customer name neither start with "A" and nor ends with "n"
+select * from orders where customer_name not like 'A%n';
+
+--write a query to get all the orders where profit is negative
+select * from orders where profit<0
+
+--write a query to get all the orders where either quantity is less than 3 or profit is 0
+select * from orders where profit=0 or quantity<3
+
+--your manager handles the sales for South region and he wants you to create a report of all the orders in his region where some discount is provided to the customers
+select * from orders where region='South' and discount>0
+
+--write a query to find top 5 orders with highest sales in furniture category 
+select top 5 * from orders where category='Furniture' order by sales desc 
+
+--write a query to find all the records in technology and furniture category for the orders placed in the year 2020 only
+select  * from orders where category in ('Furniture','Technology') 
+and order_date between '2020-01-01' and '2020-12-31'
+
+--write a query to find all the orders where order date is in year 2020 but ship date is in 2021
+select   * from orders where 
+order_date between '2020-01-01' and '2020-12-31' and ship_date between '2021-01-01' and '2021-12-31'
+
+--write a update statement to update city as null for order ids:  CA-2020-161389, US-2021-156909
+update orders set city=null where order_id in ('CA-2020-161389','US-2021-156909')
+
+--write a query to find orders where city is null
+select * from orders where city is null
+
+--write a query to get total profit, first order date and latest order date for each category
+select category, sum(profit) as total_profit, min(order_date) as first_order_date, max(order_date) as latest_order_date
+from orders
+group by category 
+
+--write a query to find sub-categories where average profit is more than the half of the max profit in that sub-category
+select sub_category
+from orders
+group by sub_category
+having avg(profit) > max(profit)/2
+
+--write a query to find students who have got same marks in Physics and Chemistry.
+select student_id , count(*) as total_records,count(distinct marks) as distinct_marks
+from exams
+where subject in ('Physics','Chemistry')
+group by student_id
+having count(*)=2 and count(distinct marks) = 1;
+
+--write a query to find total number of products in each category.
+select category,count(distinct product_id) as no_of_products
+from orders
+group by category
+
+--write a query to find top 5 sub categories in west region by total quantity sold
+select top 5  sub_category, sum(quantity) as total_quantity
+from orders
+where region='West'
+group by sub_category
+order by total_quantity desc
+
+--write a query to find total sales for each region and ship mode combination for orders in year 2020
+select region,ship_mode ,sum(sales) as total_sales
+from orders
+where order_date between '2020-01-01' and '2020-12-31'
+group by region,ship_mode
+
+--write a query to get region wise count of return orders
+select region,count(distinct o.order_id) as no_of_return_orders
+from orders o
+inner join returns r on o.order_id=r.order_id
+group by region
+
+--write a query to get category wise sales of orders that were not returned
+select category,sum(o.sales) as total_sales
+from orders o
+left join returns r on o.order_id=r.order_id
+where r.order_id is null
+group by category
+
+--write a query to print dep name and average salary of employees in that dep .
+select d.dep_name,avg(e.salary) as avg_sal
+from employee e
+inner join dept d on e.dept_id=d.dep_id
+group by d.dep_name
+
+--write a query to print dep names where none of the emplyees have same salary.
+select d.dep_name
+from employee e
+inner join dept d on e.dept_id=d.dep_id
+group by d.dep_name
+having count(e.emp_id)=count(distinct e.salary)
+
+--write a query to print sub categories where we have all 3 kinds of returns (others,bad quality,wrong items)
+select o.sub_category
+from orders o
+inner join returns r on o.order_id=r.order_id
+group by o.sub_category
+having count(distinct r.return_reason)=3
+
+--write a query to find cities where not even a single order was returned.
+select city
+from orders o
+left join returns r on o.order_id=r.order_id
+group by city
+having count(r.order_id)=0
+
+--write a query to find top 3 subcategories by sales of returned orders in east region
+select top 3 sub_category,sum(o.sales) as return_sales
+from orders o
+inner join returns r on o.order_id=r.order_id
+where o.region='East'
+group by sub_category
+order by return_sales  desc
+
+--write a query to print dep name for which there is no employee
+select d.dep_id,d.dep_name
+from dept d 
+left join employee e on e.dept_id=d.dep_id
+group by d.dep_id,d.dep_name
+having count(e.emp_id)=0;
+
+--write a query to print employees name for which dep id is not avaiable in dept table
+select e.*
+from employee e 
+left join dept d  on e.dept_id=d.dep_id
+where d.dep_id is null;
+
+--write a query to print emp name , their manager name and diffrence in their age (in days) 
+for employees whose year of birth is before their managers year of birth
+select e1.emp_name,e2.emp_name as manager_name , DATEDIFF(day,e1.dob,e2.dob) as diff_in_age
+from employee e1
+inner join employee e2 on e1.manager_id=e2.emp_id
+where DATEPART(year,e1.dob)< DATEPART(year,e2.dob);
+
+--write a query to find subcategories who never had any return orders in the month of november (irrespective of years)
+select sub_category
+from orders o
+left join returns r on o.order_id=r.order_id
+where DATEPART(month,order_date)=11
+group by sub_category
+having count(r.order_id)=0;
+
+--orders table can have multiple rows for a particular order_id when customers buys more than 1 product in an order.
+write a query to find order ids where there is only 1 product bought by the customer.
+select order_id
+from orders 
+group by order_id
+having count(1)=1
+
+--write a query to print manager names along with the comma separated list(order by emp salary) of all employees directly reporting to him.
+select e2.emp_name as manager_name , string_agg(e1.emp_name,',') as emp_list
+from employee e1
+inner join employee e2 on e1.manager_id=e2.emp_id
+group by e2.emp_name
+
+--write a query to get number of business days between order_date and ship_date (exclude weekends). 
+Assume that all order date and ship date are on weekdays only
+select order_id,order_date,ship_date ,datediff(day,order_date,ship_date)-2*datediff(week,order_date,ship_date) as no_of_business_days
+from 
+orders
+
+--write a query to print 3 columns : category, total_sales and (total sales of returned orders)
+select o.category,sum(o.sales) as total_sales
+,sum(case when r.order_id is not null then sales end) as return_orders_sales
+from orders o
+left join returns r on o.order_id=r.order_id
+group by category
+
+--write a query to print below 3 columns
+category, total_sales_2019(sales in year 2019), total_sales_2020(sales in year 2020)
+select category,sum(case when datepart(year,order_date)=2019 then sales end) as total_sales_2019
+,sum(case when datepart(year,order_date)=2020 then sales end) as total_sales_2020
+from orders 
+group by category
+
+--write a query print top 5 cities in west region by average no of days between order date and ship date.
+select top 5 city, avg(datediff(day,order_date,ship_date) ) as avg_days
+from orders
+where region='West'
+group by city
+order by avg_days desc
+
+--write a query to print emp name, manager name and senior manager name (senior manager is manager's manager)
+select e1.emp_name,e2.emp_name as manager_name,e3.emp_name as senior_manager_name
+from employee e1
+inner join employee e2 on e1.manager_id=e2.emp_id
+inner join employee e3 on e2.manager_id=e3.emp_id
+
+--write a query to produce below output from icc_world_cup table.
+team_name, no_of_matches_played, no_of_wins , no_of_losses
+with all_teams as 
+(select team_1 as team, case when team_1=winner then 1 else 0 end as win_flag from icc_world_cup
+union all
+select team_2 as team, case when team_2=winner then 1 else 0 end as win_flag from icc_world_cup)
+select team,count(1) as total_matches_played , sum(win_flag) as matches_won,count(1)-sum(win_flag) as matches_lost
+from all_teams
+group by team
+
+--write a query to print first name and last name of a customer using orders table(everything after first space can be considered as last name)
+customer_name, first_name,last_name
+select customer_name , trim(SUBSTRING(customer_name,1,CHARINDEX(' ',customer_name))) as first_name
+, SUBSTRING(customer_name,CHARINDEX(' ',customer_name)+1,len(customer_name)-CHARINDEX(' ',customer_name)+1) as second_name
+from orders
+
+--write a query to print below output using drivers table. Profit rides are the no of rides where end location of a ride is 
+same as start location of immediate next ride for a driver
+id, total_rides , profit_rides
+select d1.id as driver_id, count(1) as total_rides, count(d2.id) as profit_rides
+from drivers as d1
+left join drivers as d2
+on d1.id=d2.id and d1.end_loc=d2.start_loc and d1.end_time=d2.start_time
+group by d1.id
+
+--write a query to print customer name and no of occurence of character 'n' in the customer name.
+customer_name , count_of_occurence_of_n
+select customer_name , len(customer_name)-len(replace(lower(customer_name),'n','')) as count_of_occurence_of_n
+from orders
+
+--write a query to print below output from orders data. example output
+hierarchy type,hierarchy name ,total_sales_in_west_region,total_sales_in_east_region
+category , Technology, ,
+category, Furniture, ,
+category, Office Supplies, ,
+sub_category, Art , ,
+sub_category, Furnishings, ,
+and so on all the category ,subcategory and ship_mode hierarchies
+select 'category' as hirerarchy_name, category as hirerarchy_type, 
+sum(case when region='west' then sales end) as total_sales_in_west, 
+sum(case when region='east' then sales end) as total_sales_in_east
+from orders
+group by category
+union all
+select 'Sub_Category' as hirerarchy_name, Sub_Category as hirerarchy_type, 
+sum(case when region='west' then sales end) as total_sales_in_west, 
+sum(case when region='east' then sales end) as total_sales_in_east
+from orders
+group by Sub_category
+union all
+select 'Ship_mode' as hirerarchy_name, Ship_mode as hirerarchy_type, 
+sum(case when region='west' then sales end) as total_sales_in_west, 
+sum(case when region='east' then sales end) as total_sales_in_east
+from orders
+group by Ship_mode
+
+--the first 2 characters of order_id represents the country of order placed. write a query to print total no of orders placed in each country
+(an order can have 2 rows in the data when more than 1 item was purchased in the order but it should be considered as 1 order)
+select left(order_id,2) as country, count(distinct order_id) as total_orders
+from orders 
+group by left(order_id,2)
+
+--write a query to find premium customers from orders data. Premium customers are those who have done more orders than average no of orders per customer.
+with no_of_orders_each_customer as (
+select customer_id,count(distinct order_id) as no_of_orders
+from orders 
+group by customer_id)
+select * from 
+no_of_orders_each_customer where no_of_orders > (select avg(no_of_orders) from no_of_orders_each_customer)
+
+--write a query to find employees whose salary is more than average salary of employees in their department
+select e.* from employee e
+inner join (select dept_id,avg(salary) as avg_sal from employee group by dept_id)  d
+on e.dept_id=d.dept_id
+where salary>avg_sal
+
+--write a query to find employees whose age is more than average age of all the employees.
+select * from employee 
+where emp_age > (select avg(emp_age) from employee)
+
+--write a query to print emp name, salary and dep id of highest salaried employee in each department 
+select e.* from employee e
+inner join (select dept_id,max(salary) as max_sal from employee group by dept_id)  d
+on e.dept_id=d.dept_id
+where salary=max_sal
+
+--write a query to print emp name, salary and dep id of highest salaried employee overall
+select * from employee 
+where salary = (select max(salary) from employee)
+
+--Row_number, Rank, Dense_Rank
+select * ,
+row_number() over(partition by dept_id order by salary desc) as rn
+,rank() over(partition by dept_id order by salary desc) as rnk
+,dense_rank() over(partition by dept_id order by salary desc) as d_rnk
+from employee;
+
+--Lead, Lag
+select * ,
+lead(salary,1) over(partition by dept_id order by emp_name desc) as lead_sal
+,lag(salary,1) over(partition by dept_id order by emp_name desc) as lag_sal
+from employee;
+
+--Aggregate window functions
+select *
+,sum(salary) over(partition by dept_id ) as dep_salary
+,sum(salary) over( order by emp_id) as dep_running_salary
+from employee;
+
+select 
+year_order,month_order,total_sales
+,sum(total_sales) over(order by year_order,month_order rows between 2 preceding and current row) as rolling_3_sales
+from month_wise_sales;
